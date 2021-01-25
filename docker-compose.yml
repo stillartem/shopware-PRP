@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+    php:
+      build: docker/php-fpm
+      container_name: testable
+      volumes:
+        - ./:/var/www/html/shopware:delegated
+        - ./vendor:/var/www/html/shopware/vendor:cached
+        - ./engine:/var/www/html/shopware/engine:cached
+        - ./themes:/var/www/html/shopware/themes:cached
+        - ./docker/apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      ports:
+         - "8090:80"
+      depends_on:
+       - mysql
+
+      networks:
+         - web
+
+    mysql:
+      image: mysql:5.7
+      volumes:
+        - "./.mysql-data/db:/var/lib/mysql"
+      restart: always
+      ports:
+        - 3306:3306
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: testable
+        MYSQL_USER: root
+        MYSQL_PASSWORD: root
+
+      networks:
+        - web
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 8888:8080
+      networks:
+        - web
+
+        
+networks:
+  web:
+    external: false

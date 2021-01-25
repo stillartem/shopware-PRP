@@ -1,0 +1,7 @@
+.DS_Store
+.git
+var/cache
+vendor
+engine
+themes
+.mysql-data
